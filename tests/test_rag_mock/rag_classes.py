@@ -7,7 +7,7 @@ class Retriever:
 
 class Generator:
     """Generate response based on documents"""
-    def generate(self, documents: List[Dict[str, str]]) -> str:
+    def generate(self, query:str, documents: List[Dict[str, str]]) -> str:
         raise NotImplementedError("Generator not implemented")
 
 class RAG:
@@ -16,7 +16,7 @@ class RAG:
         self.processor = generator
 
     def run(self, query: str)-> Dict[str, Any]:
-        documents = self.retriever.retriev(query)
-        answer = self.processor.process(documents)
+        documents = self.retriever.retrieve(query)
+        answer = self.processor.generate(query, documents)
         return {'documents': documents, 'answer': answer}
     
