@@ -1,5 +1,5 @@
 import pytest
-from tests.rag_classes import Retriever
+from tests.test_rag_mock.rag_classes import Retriever
 from typing import List, Dict
 
 
