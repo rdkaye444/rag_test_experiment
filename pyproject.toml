@@ -5,8 +5,11 @@ description = "Messing around with automated tests for RAG and AI"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "numpy>=2.3.0",
+    "pydantic>=2.11.7",
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
+    "sentence-transformers>=4.1.0",
 ]
 
 [tool.pytest.ini_options]
