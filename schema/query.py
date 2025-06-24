@@ -1,4 +1,5 @@
-from pydantic import BaseModel, UUID4, Optional
+from pydantic import BaseModel, UUID4
+from typing import Optional
 
 class Query(BaseModel):
     query: str
