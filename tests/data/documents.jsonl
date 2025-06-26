@@ -1,0 +1,2 @@
+{"id": "550e8400-e29b-41d4-a716-446655440000", "metadata": {"title": "Sample Document 1", "tags": ["test", "sample"], "source": "test_data"}, "data": "This is a sample document for testing purposes."}
+{"id": "550e8400-e29b-41d4-a716-446655440001", "metadata": {"title": "Sample Document 2", "tags": ["test", "example"], "source": "test_data"}, "data": "Another sample document with different content."}

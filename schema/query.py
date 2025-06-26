@@ -6,5 +6,5 @@ class Query(BaseModel):
     expected_doc_ids: list[UUID4]
     category: str
     expected_semantic_output: str
-    adversarial_varients: list[str]
+    adversarial_variants: list[str]
     notes: Optional[str]

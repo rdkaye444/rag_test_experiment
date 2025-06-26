@@ -41,4 +41,4 @@ def test_pipeline_returns_one_document(retriever_factory, generator_factory):
     retriever = retriever_factory(documents)
     generator = generator_factory(query, documents, "document content")
     pipeline = RagPipeline(query, retriever, generator)
-    assert pipeline.run() == "test"
+    assert pipeline.run() == "document content"
