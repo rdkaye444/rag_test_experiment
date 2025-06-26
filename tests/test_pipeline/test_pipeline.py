@@ -1,9 +1,12 @@
 from uuid import uuid4
+import pytest
 from pytest import fixture
 from rag.retriever import Retriever
 from rag.generator import Generator
 from rag.pipeline import RagPipeline
 from schema.document import Document, MetaData
+from schema.query import Query
+from tests.utilities.file_utilities import load_test_data
 
 class StaticMockRetriever(Retriever):
     def __init__(self, documents:list[Document]):
@@ -41,4 +44,12 @@ def test_pipeline_returns_one_document(retriever_factory, generator_factory):
     retriever = retriever_factory(documents)
     generator = generator_factory(query, documents, "document content")
     pipeline = RagPipeline(query, retriever, generator)
+    assert pipeline.run() == "document content"
+
+@pytest.mark.parametrize("query", load_test_data("queries.jsonl", Query))
+def test_pipeline_returns_one_document_parameterized(query, retriever_factory, generator_factory):
+    documents = [Document(id=uuid4(), data="document content", metadata=MetaData(title="test", tags=["test"], source="test"))]
+    retriever = retriever_factory(documents)
+    generator = generator_factory(query.query, documents, "document content")
+    pipeline = RagPipeline(query.query, retriever, generator)
     assert pipeline.run() == "document content"

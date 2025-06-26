@@ -5,7 +5,7 @@ from pathlib import Path
 from schema.document import Document
 from schema.query import Query
 
-TEST_DATA_DIR = Path(__file__).parent / "data"
+TEST_DATA_DIR = Path("tests/data")
 
 
 def _load_jsonl(file_path: str):
