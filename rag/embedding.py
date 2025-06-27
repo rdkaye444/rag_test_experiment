@@ -87,4 +87,13 @@ class Embedder:
         """
         return self._embed(texts)
 
+
+class ChromaEmbedder:
+    def __init__(self, embedder: 'Embedder'):
+        self.embedder = embedder
+    
+    def __call__(self, input: list[str]) -> list[list[float]]:
+        return self.embedder.embed_batch(input)
+    
+
     

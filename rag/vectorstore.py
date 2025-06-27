@@ -1,12 +1,11 @@
 from schema.document import Document
-from rag.embedding import Embedder
-from sentence_transformers import CrossEncoder
+from rag.embedding import Embedder, ChromaEmbedder
 from pathlib import Path
 import json
 import chromadb 
 from datetime import datetime
 
-SEED_DATA_PATH = Path('data/seed_data.json')
+SEED_DATA_PATH = Path('data/seed_data.jsonl')
 COLLECTION_NAME = 'seed_data'
 
 class VectorStore:
@@ -14,17 +13,19 @@ class VectorStore:
         self.embedder = Embedder(embedder_model_name)
         self.client=chromadb.EphemeralClient()
         self.collection = self.client.create_collection(name=COLLECTION_NAME,
-                                                        embedding_function=self.embedder.embed,
+                                                        embedding_function=ChromaEmbedder(self.embedder),
                                                         metadata={'source': 'test',
                                                                   'created_at': datetime.now().isoformat()})
 
     def seed_documents(self):
         if not SEED_DATA_PATH.exists():
             raise FileNotFoundError(f"Seed data file not found at {SEED_DATA_PATH}")
+        documents = []
         with open(SEED_DATA_PATH, 'r') as f:
             for line in f:
                 data = json.loads(line)
-                self.add_document(Document(**data))
+                documents.append(Document(**data))
+        self.add_documents(documents=documents)
 
     def query(self, query: str, n_results: int = 10) -> list[Document]:
         results =  self.collection.query(query_texts=[query], n_results=n_results)
