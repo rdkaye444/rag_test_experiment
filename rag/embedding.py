@@ -26,6 +26,8 @@ class Embedder:
     def __init__(self, model_name: str = 'all-MiniLM-L6-v2'):
         """
         Initialize the Embedder with a specified sentence transformer model.
+        Default is 'all-MiniLM-L6-v2' which is a good balance of performance and speed fr
+        running tests locally.
         
         Args:
             model_name (str): The name of the pre-trained model to use.
