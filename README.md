@@ -198,6 +198,7 @@ The current generator is a mock implementation. To integrate with real LLMs:
 
 - **pytest**: Testing framework
 - **pytest-cov**: Coverage reporting
+- **ruff**: Linting
 
 ## Contributing
 
