@@ -1,9 +1,10 @@
-from schema.document import Document
+from schema.document import Document, MetaData
 from rag.embedding import Embedder, ChromaEmbedder
 from pathlib import Path
 import json
 import chromadb 
 from datetime import datetime
+import pprint
 
 SEED_DATA_PATH = Path('data/seed_data.jsonl')
 COLLECTION_NAME = 'seed_data'
@@ -36,5 +37,5 @@ class VectorStore:
         self.collection.add(
             documents=[doc.data for doc in documents],
             ids=[doc.id for doc in documents],
-            metadatas=[doc.metadata for doc in documents]
+            metadatas=[doc.metadata.model_dump() for doc in documents]
         )       

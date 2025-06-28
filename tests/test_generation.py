@@ -1,5 +1,6 @@
 from rag.retriever import Retriever
 import pytest
+import pprint
 
 @pytest.fixture(scope="session")
 def create_retriever():
@@ -7,12 +8,11 @@ def create_retriever():
     retriever.vector_store.seed_documents()
     return retriever
 
-def test_retrieve(create_retriever):
-    documents = create_retriever.retrieve("What is the wierdest animal?")
-    assert documents[0].metadata.tags == ["mammals", "aquatic"]
+def test_retrieve_platypus(create_retriever):
+    documents = create_retriever.retrieve("Why is a platypus so weird?")
+    pprint.pprint(documents)
+    assert documents[0].metadata.source_species == "mammal"
     assert documents[0].data == "Platypus are mammals that lay eggs.  They are very strange mammals."
-
-
 
 
 

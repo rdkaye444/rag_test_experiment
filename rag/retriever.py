@@ -2,6 +2,7 @@ from schema.document import Document
 from rag.embedding import Embedder
 from sentence_transformers import CrossEncoder
 from rag.vectorstore import VectorStore
+import pprint
 
 class Retriever:
     def __init__(self, 
@@ -19,9 +20,14 @@ class Retriever:
         """
         """
         corpus = [doc.data for doc in documents]
+        pprint.pprint(corpus)
         ranks = self.document_ranker.rank(query, corpus)
+        print(ranks)
         for rank in ranks:
-            documents[rank['corpus_id']].score = rank['score']
-        return sorted(documents, key = lambda x: x.score, reverse = True)
+            print('******')
+            print(rank)
+            print(documents[rank['corpus_id']])
+            documents[rank['corpus_id']].rank = rank['score']
+        return sorted(documents, key = lambda x: x.rank, reverse = True)
 
     
