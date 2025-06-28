@@ -1,9 +1,7 @@
 import json
-from pydantic import BaseModel
-from pytest import fixture
 from pathlib import Path
-from schema.document import Document
-from schema.query import Query
+
+from pydantic import BaseModel
 
 TEST_DATA_DIR = Path("tests/data")
 

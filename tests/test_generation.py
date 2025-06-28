@@ -1,5 +1,3 @@
-from rag.retriever import Retriever
-import pytest
 import pprint
 
 

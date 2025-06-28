@@ -13,8 +13,7 @@ from pathlib import Path
 import chromadb
 
 from rag.embedding import ChromaEmbedder, Embedder
-from schema.document import Document, MetaData
-
+from schema.document import Document
 
 SEED_DATA_PATH = Path('data/seed_data.jsonl')
 COLLECTION_NAME = 'seed_data'

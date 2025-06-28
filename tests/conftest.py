@@ -1,7 +1,9 @@
 import pytest
+
 from rag.generator import Generator
-from rag.retriever import Retriever
 from rag.pipeline import RagPipeline
+from rag.retriever import Retriever
+
 
 @pytest.fixture(scope="session")
 def create_retriever():

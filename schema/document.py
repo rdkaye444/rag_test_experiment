@@ -1,4 +1,5 @@
-from pydantic import BaseModel, UUID4
+from pydantic import BaseModel
+
 
 class MetaData(BaseModel):
     title: str

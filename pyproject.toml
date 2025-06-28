@@ -10,6 +10,7 @@ dependencies = [
     "pydantic>=2.11.7",
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
+    "ruff>=0.12.1",
     "sentence-transformers>=4.1.0",
 ]
 
@@ -22,3 +23,11 @@ testpaths = [
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+exclude = ["tests/data/", ".venv/"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
