@@ -8,6 +8,7 @@ or replaced with more sophisticated language models.
 
 from schema.document import Document
 
+
 class Generator:
     """
     A simple generator for creating responses based on retrieved documents.
