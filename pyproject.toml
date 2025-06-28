@@ -5,6 +5,7 @@ description = "Messing around with automated tests for RAG and AI"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "chromadb>=1.0.13",
     "numpy>=2.3.0",
     "pydantic>=2.11.7",
     "pytest>=8.4.1",

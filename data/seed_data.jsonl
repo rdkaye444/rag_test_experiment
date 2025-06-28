@@ -1,0 +1,3 @@
+{"id": "1","metadata": {"title": "Robin","source_species":"avian","data_source": "test"},"data": "Birds lay eggs to reproduce.  Eggs are delicious","rank": 0.0}
+{"id": "2","metadata": {"title": "Horse","source_species":"mammal","data_source": "test"},"data": "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.","rank": 0.0}
+{"id": "3","metadata": {"title": "Platypus","source_species":"mammal","data_source": "test"},"data": "Platypus are mammals that lay eggs.  They are very strange mammals.","rank": 0.0}
