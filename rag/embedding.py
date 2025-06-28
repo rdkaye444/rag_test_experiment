@@ -89,10 +89,39 @@ class Embedder:
 
 
 class ChromaEmbedder:
+    """
+    Wrapper class for ChromaDB embedding function compatibility.
+    
+    This class provides a callable interface that ChromaDB can use to generate
+    embeddings. It wraps the main Embedder class to provide batch embedding
+    functionality in the format expected by ChromaDB.
+    
+    Attributes:
+        embedder (Embedder): The underlying embedding model.
+    """
+    
     def __init__(self, embedder: 'Embedder'):
+        """
+        Initialize the ChromaEmbedder with an Embedder instance.
+        
+        Args:
+            embedder (Embedder): The embedding model to use for generating vectors.
+        """
         self.embedder = embedder
     
     def __call__(self, input: list[str]) -> list[list[float]]:
+        """
+        Generate embeddings for a list of text strings.
+        
+        This method is called by ChromaDB to generate embeddings for documents
+        during indexing and querying.
+        
+        Args:
+            input (list[str]): List of text strings to embed.
+        
+        Returns:
+            list[list[float]]: List of embedding vectors, one for each input text.
+        """
         return self.embedder.embed_batch(input)
     
 
