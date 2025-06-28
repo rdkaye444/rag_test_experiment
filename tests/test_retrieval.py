@@ -2,11 +2,6 @@ from rag.retriever import Retriever
 import pytest
 import pprint
 
-@pytest.fixture(scope="session")
-def create_retriever():
-    retriever = Retriever()
-    retriever.vector_store.seed_documents()
-    return retriever
 
 def test_retrieve_platypus(create_retriever):
     documents = create_retriever.retrieve("Why is a platypus so weird?")
