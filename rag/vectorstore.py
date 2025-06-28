@@ -6,16 +6,19 @@ using ChromaDB. It handles document ingestion, vector storage, and semantic sear
 operations.
 """
 
-from schema.document import Document, MetaData
-from rag.embedding import Embedder, ChromaEmbedder
-from pathlib import Path
 import json
-import chromadb 
 from datetime import datetime
-import pprint
+from pathlib import Path
+
+import chromadb
+
+from rag.embedding import ChromaEmbedder, Embedder
+from schema.document import Document, MetaData
+
 
 SEED_DATA_PATH = Path('data/seed_data.jsonl')
 COLLECTION_NAME = 'seed_data'
+
 
 class VectorStore:
     """

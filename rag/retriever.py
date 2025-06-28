@@ -6,11 +6,14 @@ It combines semantic search using embeddings with re-ranking using cross-encoder
 improve retrieval quality.
 """
 
-from schema.document import Document
-from rag.embedding import Embedder
-from sentence_transformers import CrossEncoder
-from rag.vectorstore import VectorStore
 import pprint
+
+from sentence_transformers import CrossEncoder
+
+from rag.embedding import Embedder
+from rag.vectorstore import VectorStore
+from schema.document import Document
+
 
 class Retriever:
     """

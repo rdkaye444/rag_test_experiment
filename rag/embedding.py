@@ -7,6 +7,7 @@ operations.
 """
 
 from typing import List, Union
+
 from sentence_transformers import SentenceTransformer
 
 

@@ -6,8 +6,8 @@ components of the RAG system. It provides a simple interface for running end-to-
 RAG queries.
 """
 
-from rag.retriever import Retriever
 from rag.generator import Generator
+from rag.retriever import Retriever
 
 
 class RagPipeline:
