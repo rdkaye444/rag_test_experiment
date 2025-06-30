@@ -6,8 +6,6 @@ It combines semantic search using embeddings with re-ranking using cross-encoder
 improve retrieval quality.
 """
 
-import pprint
-
 from sentence_transformers import CrossEncoder
 
 from rag.embedding import Embedder
@@ -78,13 +76,8 @@ class Retriever:
             list[Document]: List of documents sorted by relevance score (descending).
         """
         corpus = [doc.data for doc in documents]
-        pprint.pprint(corpus)
         ranks = self.document_ranker.rank(query, corpus)
-        print(ranks)
         for rank in ranks:
-            print('******')
-            print(rank)
-            print(documents[rank['corpus_id']])
             documents[rank['corpus_id']].rank = rank['score']
         return sorted(documents, key=lambda x: x.rank, reverse=True)
 

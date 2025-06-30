@@ -1,3 +1,24 @@
 {"id": "1","metadata": {"title": "Robin","source_species":"avian","data_source": "test"},"data": "Birds lay eggs to reproduce.  Eggs are delicious","rank": 0.0}
 {"id": "2","metadata": {"title": "Horse","source_species":"mammal","data_source": "test"},"data": "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.","rank": 0.0}
 {"id": "3","metadata": {"title": "Platypus","source_species":"mammal","data_source": "test"},"data": "Platypus are mammals that lay eggs.  They are very strange mammals.","rank": 0.0}
+{"id": "4", "metadata": {"title": "Eagle", "source_species": "avian", "data_source": "test"}, "data": "Eagles are large birds of prey with excellent eyesight. They lay eggs in high nests.", "rank": 0.0}
+{"id": "5", "metadata": {"title": "Kangaroo", "source_species": "mammal", "data_source": "test"}, "data": "Kangaroos are marsupials. They carry their young in pouches and give birth to live offspring.", "rank": 0.0}
+{"id": "6", "metadata": {"title": "Crocodile", "source_species": "reptile", "data_source": "test"}, "data": "Crocodiles are reptiles that lay eggs in nests near water. They are cold-blooded and have scaly skin.", "rank": 0.0}
+{"id": "7", "metadata": {"title": "Salmon", "source_species": "fish", "data_source": "test"}, "data": "Salmon are fish that migrate upstream to lay eggs in freshwater rivers.", "rank": 0.0}
+{"id": "8", "metadata": {"title": "Frog", "source_species": "amphibian", "data_source": "test"}, "data": "Frogs lay eggs in water. Their eggs hatch into tadpoles before becoming adult frogs.", "rank": 0.0}
+{"id": "9", "metadata": {"title": "Penguin", "source_species": "avian", "data_source": "test"}, "data": "Penguins are flightless birds that lay eggs and raise their chicks on icy terrain.", "rank": 0.0}
+{"id": "10", "metadata": {"title": "Elephant", "source_species": "mammal", "data_source": "test"}, "data": "Elephants are the largest land mammals. They give birth to live young after long gestation periods.", "rank": 0.0}
+{"id": "11", "metadata": {"title": "Duck", "source_species": "avian", "data_source": "test"}, "data": "Ducks lay eggs in nests near water. Their ducklings are born able to swim almost immediately.", "rank": 0.0}
+{"id": "12", "metadata": {"title": "Lizard", "source_species": "reptile", "data_source": "test"}, "data": "Lizards are reptiles that can regrow their tails and usually lay soft-shelled eggs.", "rank": 0.0}
+{"id": "13", "metadata": {"title": "Shark", "source_species": "fish", "data_source": "test"}, "data": "Some sharks lay eggs, while others give birth to live young. Their reproduction is diverse.", "rank": 0.0}
+{"id": "14", "metadata": {"title": "Ostrich", "source_species": "avian", "data_source": "test"}, "data": "Ostriches are the largest birds. They lay the biggest eggs of any living land animal.", "rank": 0.0}
+{"id": "15", "metadata": {"title": "Bat", "source_species": "mammal", "data_source": "test"}, "data": "Bats are the only mammals capable of sustained flight. They give birth to live young.", "rank": 0.0}
+{"id": "16", "metadata": {"title": "Turtle", "source_species": "reptile", "data_source": "test"}, "data": "Turtles lay their eggs in holes dug into the sand. Hatchlings must crawl to the sea.", "rank": 0.0}
+{"id": "17", "metadata": {"title": "Newt", "source_species": "amphibian", "data_source": "test"}, "data": "Newts are amphibians that undergo metamorphosis from larvae to adults and lay eggs in water.", "rank": 0.0}
+{"id": "18", "metadata": {"title": "Hummingbird", "source_species": "avian", "data_source": "test"}, "data": "Hummingbirds lay tiny eggs and build cup-shaped nests often hidden under leaves.", "rank": 0.0}
+{"id": "19", "metadata": {"title": "Whale", "source_species": "mammal", "data_source": "test"}, "data": "Whales are marine mammals. They give birth to live calves and nurse them underwater.", "rank": 0.0}
+{"id": "20", "metadata": {"title": "Seahorse", "source_species": "fish", "data_source": "test"}, "data": "In seahorses, the male carries the eggs in a pouch until they hatch.", "rank": 0.0}
+{"id": "21", "metadata": {"title": "Giraffe", "source_species": "mammal", "data_source": "test"}, "data": "Giraffes give birth standing up. Their calves fall several feet to the ground at birth.", "rank": 0.0}
+{"id": "22", "metadata": {"title": "Toad", "source_species": "amphibian", "data_source": "test"}, "data": "Toads lay eggs in long gelatinous strings in shallow water.", "rank": 0.0}
+{"id": "23", "metadata": {"title": "Falcon", "source_species": "avian", "data_source": "test"}, "data": "Falcons are birds of prey known for their speed. They lay eggs in cliffside nests.", "rank": 0.0}
+{"id": "24", "metadata": {"title": "Humpback Whale", "source_species": "mammal", "data_source": "test"}, "data": "Humpback whales are known for their complex songs. These marine mammals use sound to communicate.", "rank": 0.0}
