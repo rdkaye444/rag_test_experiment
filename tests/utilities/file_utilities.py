@@ -1,10 +1,11 @@
 import json
+import logging
 from pathlib import Path
 
 from pydantic import BaseModel
 
 TEST_DATA_DIR = Path("tests/data")
-
+logger = logging.getLogger(__name__)
 
 def _load_jsonl(file_path: str):
     try:
@@ -13,10 +14,10 @@ def _load_jsonl(file_path: str):
                 try:
                     yield json.loads(line.strip())
                 except json.JSONDecodeError as e:
-                    print(f"Warning: Invalid JSON on line {line_num} in {file_path}: {e}")
+                    logger.error(f"Warning: Invalid JSON on line {line_num} in {file_path}: {e}")
                     continue
     except FileNotFoundError:
-        print(f"Warning: Test data file {file_path} not found. Tests may fail.")
+        logger.error(f"Warning: Test data file {file_path} not found. Tests may fail.")
         return
 
 
