@@ -14,12 +14,11 @@ of individual components while maintaining a clean interface for the complete pi
 """
 import logging
 
-from rag.config import TURN_ON_THIRD_PARTY_LOGGING
+from rag.config import THIRD_PARTY_LOGGING_LEVEL
 from rag.logger import setup_logger
 
 # silence noisy loggers by setting them to WARNING
-if not TURN_ON_THIRD_PARTY_LOGGING:
-    logging.getLogger().setLevel(logging.WARNING)
+logging.getLogger().setLevel(THIRD_PARTY_LOGGING_LEVEL)
 
 # Setup the application logger
 setup_logger(__name__)
