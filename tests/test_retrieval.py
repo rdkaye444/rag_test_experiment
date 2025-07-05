@@ -35,7 +35,3 @@ def test_top_n_all_results_should_be_birds(create_retriever):
 def test_fallback_low_recall_domain(create_retriever):
     documents = create_retriever.retrieve("What is the meaning of life?")
     assert documents[0].data == "Platypus are mammals that lay eggs.  They are very strange mammals."
-
-
-def test_should_fail_with_exception_verify_logging(create_retriever):
-    raise Exception("This is a test exception")

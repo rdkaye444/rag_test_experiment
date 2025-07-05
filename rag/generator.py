@@ -6,6 +6,7 @@ and user queries. It includes a simple 'mock'generator implementation that can b
 or replaced with more sophisticated language models.
 """
 
+from rag.llm import OpenAI_LLM
 from schema.document import Document
 
 
@@ -26,6 +27,7 @@ class Generator:
         Initialize the Generator with an empty last prompt.
         """
         self.last_prompt = ""
+        self.llm = OpenAI_LLM()
 
     def generate(self, query: str, documents: list[Document])-> str:
         """
@@ -45,7 +47,8 @@ class Generator:
         llm_boilerplate = "Answer the query based on the following documents:"
         documents_str = "\n".join([doc.data for doc in documents])
         self.last_prompt= f"{llm_boilerplate}\n\n{documents_str}\n\nQuery: {query}"
-        return documents[0].data
+        #return documents[0].data
+        return self.llm.generate_response(self.last_prompt, "gpt-4o-mini")
     
     def get_last_prompt(self)-> str:
         """
