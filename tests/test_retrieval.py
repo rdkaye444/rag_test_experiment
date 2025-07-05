@@ -1,4 +1,3 @@
-import pprint
 import pytest
 
 @pytest.mark.parametrize("query,n_results,expected_data,expected_species", [

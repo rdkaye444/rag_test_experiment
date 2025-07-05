@@ -12,3 +12,13 @@ This package provides a complete implementation of a RAG system with the followi
 The system is designed to be modular and extensible, allowing for easy customization
 of individual components while maintaining a clean interface for the complete pipeline.
 """
+import logging
+
+from rag.config import THIRD_PARTY_LOGGING_LEVEL
+from rag.logger import setup_logger
+
+# silence noisy loggers by setting them to WARNING
+logging.getLogger().setLevel(THIRD_PARTY_LOGGING_LEVEL)
+
+# Setup the application logger
+setup_logger(__name__)
