@@ -1,6 +1,11 @@
+from rag.judge import Judge, JudgeResult
+import pytest
 
-
-def test_generate_platypus(create_pipeline):
-    response = create_pipeline.run("Why is a platypus so weird?")
-    print(response)
-    assert response == "Platypus are mammals that lay eggs.  They are very strange mammals."
+def test_generate_platypus(pipeline_factory):
+    pipeline, retriever, _  = pipeline_factory()
+    response = pipeline.run("Why is a platypus so weird?")
+    judge = Judge()
+    result = judge.judge(response, retriever.last_documents)
+    if result != JudgeResult.TRUE:
+        explanation = judge.explain(response, retriever.last_documents)
+        pytest.fail(f"Judgment was {result.name}. Explanation:\n{explanation}")

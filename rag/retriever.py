@@ -45,6 +45,7 @@ class Retriever:
         self.embedder = Embedder(embedder_model_name)
         self.document_ranker = CrossEncoder(ranker_model_name)
         self.vector_store = VectorStore()
+        self.last_documents = []
         logger.info(f"Retriever initialized with embedder: {embedder_model_name} and ranker: {ranker_model_name}")
 
     def retrieve(self, query: str, n_results: int = 10) -> list[Document]:
@@ -62,6 +63,7 @@ class Retriever:
             list[Document]: List of retrieved documents, sorted by relevance score.
         """
         documents = self.vector_store.query(query, n_results)
+        self.last_documents = documents
         return self.reorder_documents(documents, query)
 
     def reorder_documents(self, documents: list[Document], query: str) -> list[Document]:
@@ -82,9 +84,17 @@ class Retriever:
         corpus = [doc.data for doc in documents]
         ranks = self.document_ranker.rank(query, corpus)
         for rank in ranks:
-            documents[rank['corpus_id']].rank = rank['score']
-
-        
+            documents[rank['corpus_id']].rank = rank['score']        
         return sorted(documents, key=lambda x: x.rank, reverse=True)
+    
+    def clear_last_documents(self):
+        """
+        Clear the last retrieved documents from memory.
+        
+        This method resets the last_documents list to an empty state. It's typically
+        used for test isolation or when starting a new retrieval session to ensure
+        no stale document references remain from previous queries.
+        """
+        self.last_documents = []
 
     
