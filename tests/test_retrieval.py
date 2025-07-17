@@ -35,7 +35,6 @@ def test_retrieval_synonym(create_retriever, query, n_results, expected_data, ex
 
 @pytest.mark.top_k
 @pytest.mark.parametrize("query,n_results,expected_data,expected_species", [
-# Synonym/semantic matches
 ("How many bird species do you know about?", 3, None, None),  # We’ll just check len==3
 ])
 def test_retrieval_top_k(create_retriever, query, n_results, expected_data, expected_species):
@@ -77,3 +76,38 @@ def test_negative_control_retrieval(create_retriever, query, negated_search_term
 def test_fallback_low_recall_domain(create_retriever):
     documents = create_retriever.retrieve("What is the meaning of life?")
     assert documents[0].data == "Platypus are mammals that lay eggs.  They are very strange mammals."
+
+
+
+# Recall Ground truth tests - positive and negative
+# Note - for a retriever a common simplification is Recall@1. 
+# These tests are very closely related to the direct retrieval tests due to my small dataset
+# TODO: Add a test for recall as a function of top_k false negatives and positives
+def _test_ground_truth(create_retriever, query, ground_truth_answer, top_k, expected_found):
+    retriever = create_retriever
+    retrieved_docs = retriever.retrieve(query, n_results=top_k)
+    found = any(ground_truth_answer.lower() in doc.data.lower() for doc in retrieved_docs)
+    assert found == expected_found, (
+        f"Recall@{top_k} failed for query: '{query}'.\n"
+        f"Expected something containing: '{ground_truth_answer}'\n"
+        f"Retrieved:\n" + "\n".join(f"- {doc.data}" for doc in retrieved_docs))
+
+@pytest.mark.recall_ground_truth
+@pytest.mark.parametrize("query, ground_truth_answer, top_k, expected_found", [
+    ("Why is a platypus so weird?", "platypus", 3, True),
+    ("Does a horse bear live young?", "live young", 3, True),
+    ("Tell me something about the platypus", "platypus", 3, True),
+    ("What makes the platypus unusual?", "lay eggs", 3, True),
+])
+def test_recall_against_ground_truth(create_retriever, query, ground_truth_answer, top_k, expected_found):
+    _test_ground_truth(create_retriever, query, ground_truth_answer, top_k, expected_found)
+
+@pytest.mark.recall_eval_negative
+@pytest.mark.parametrize("query, forbidden_answer, top_k, expected_found", [
+    ("Tell me about amphibians", "platypus", 3, False),
+    ("What do reptiles eat?", "fur or hair", 3, False),
+    ("How do birds fly?", "lays eggs and is a mammal", 3, False),
+]) 
+def test_recall_against_ground_truth_negative(create_retriever, query, forbidden_answer, top_k, expected_found):
+    _test_ground_truth(create_retriever, query, forbidden_answer, top_k, expected_found)
+    
