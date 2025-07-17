@@ -6,9 +6,13 @@ and user queries. It includes a simple 'mock'generator implementation that can b
 or replaced with more sophisticated language models.
 """
 
+import logging
+
 from rag.llm import OpenAI_LLM
 from schema.document import Document
 from schema.generator_config import GeneratorConfig
+
+logger = logging.getLogger(__name__)
 
 PROMPT_TEMPLATES = {
     "loose": "Answer the query based on the following documents:",
@@ -38,7 +42,7 @@ class Generator:
         self.config = config
         self.llm = OpenAI_LLM()
 
-    def generate(self, query: str, documents: list[Document], mode: str = "loose")-> str:
+    def generate(self, query: str, documents: list[Document])-> str:
         """
         Generate a response based on the query and retrieved documents.
         
@@ -54,7 +58,8 @@ class Generator:
         Returns:
             str: The generated response based on the documents and query.
         """
-        llm_boilerplate = PROMPT_TEMPLATES.get(mode, PROMPT_TEMPLATES["loose"])
+        logger.info(f"Generating response for query: {query} with mode: {self.config.mode}")
+        llm_boilerplate = PROMPT_TEMPLATES.get(self.config.mode, PROMPT_TEMPLATES['loose'])
         documents_str = "\n".join([doc.data for doc in documents])
         self.last_prompt= f"{llm_boilerplate}\n\n{documents_str}\n\nQuery: {query}"
         return self.llm.generate_response(self.last_prompt, "gpt-4o-mini")

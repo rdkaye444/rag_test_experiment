@@ -157,4 +157,6 @@ class Judge:
         self.last_result = explanation.strip()
         return self.last_result
     
+    def judge_rerank(self):
+        pass
 
