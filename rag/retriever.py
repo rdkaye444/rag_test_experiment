@@ -12,6 +12,8 @@ from rag.embedding import Embedder
 from rag.vectorstore import VectorStore
 from schema.document import Document
 import logging
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 logger = logging.getLogger(__name__)
@@ -63,6 +65,7 @@ class Retriever:
             list[Document]: List of retrieved documents, sorted by relevance score.
         """
         documents = self.vector_store.query(query, n_results)
+        documents = self.de_duplicate_documents(documents)
         self.last_documents = documents
         return self.reorder_documents(documents, query)
 
@@ -86,6 +89,29 @@ class Retriever:
         for rank in ranks:
             documents[rank['corpus_id']].rank = rank['score']        
         return sorted(documents, key=lambda x: x.rank, reverse=True)
+    
+    def de_duplicate_documents(self, documents: list[Document], threshold:float = 0.95) -> list[Document]:
+        """
+        Remove duplicate documents from the list.  Documents are duplicates if they have
+        data that is syntactically identical (approximate similarity is .95 by default)
+        """
+        texts = [doc.data for doc in documents]
+        logger.debug(f"De-duplicating {len(texts)} documents")
+        embeddings = self.embedder.embed_batch(texts)
+        np_embeddings = np.array(embeddings)
+        keep_indexes = []
+        keep_embeddings = []
+
+        for i, embed in enumerate(np_embeddings):
+            if keep_embeddings:
+                similarities = cosine_similarity([embed], keep_embeddings)[0]
+                if np.any(similarities > threshold):
+                    continue
+            keep_indexes.append(i)
+            keep_embeddings.append(embed)
+
+        logger.debug(f"Kept {len(keep_indexes)} documents after de-duplication")
+        return [documents[i] for i in keep_indexes]
     
     def clear_last_documents(self):
         """

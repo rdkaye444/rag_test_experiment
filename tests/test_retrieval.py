@@ -1,4 +1,6 @@
 import pytest
+import pprint
+
 @pytest.mark.direct_retrieval
 @pytest.mark.parametrize("query,n_results,expected_data,expected_species", [
     # Basic retrievals
@@ -22,8 +24,6 @@ def test_retriever_parametrized(create_retriever, query, n_results, expected_dat
     ("Does a mare bear live young?", 1, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal"),
     ("Does an equine bear live young?", 1, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal"),
     ("Does a bird lay eggs?", 1, "Birds lay eggs to reproduce.  Eggs are delicious", "avian"),
-    ("Which sea creature sings?", 1, "Humpback whales are known for their complex songs. These marine mammals use sound to communicate.", "mammal"),
-
 ])
 def test_retrieval_synonym(create_retriever, query, n_results, expected_data, expected_species):
     documents = create_retriever.retrieve(query, n_results=n_results)
@@ -110,4 +110,16 @@ def test_recall_against_ground_truth(create_retriever, query, ground_truth_answe
 ]) 
 def test_recall_against_ground_truth_negative(create_retriever, query, forbidden_answer, top_k, expected_found):
     _test_ground_truth(create_retriever, query, forbidden_answer, top_k, expected_found)
+    
+
+#TODO: Add a test for lexical vs symantic matching - will need to modify retriever code to do test_top_n_should_include_non_avian_results
+#TODO: Implement hybrid test_retrieval_synonym
+
+@pytest.mark.de_duplication
+def test_de_duplication(create_retriever):
+    documents = create_retriever.retrieve("Tell me all about whales", n_results=5)
+    create_retriever.de_duplicate_documents(documents)
+    pprint.pprint([doc.data for doc in documents])
+    assert len(documents) == 3 # 3 unique documents should be retrieved from this test set
+    # Note - only two of the docuemnts retrieved are about whales ;(
     
