@@ -15,6 +15,7 @@ import logging
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
+DEFAULT_DOCUMENT = Document(data="No documents retrieved for query", rank=0)
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +66,10 @@ class Retriever:
             list[Document]: List of retrieved documents, sorted by relevance score.
         """
         documents = self.vector_store.query(query, n_results)
+        logger.debug(f"Retrieved {len(documents)} documents")
+        if len(documents) == 0 or documents[0].score < 0.5:
+            logger.warning(f"No documents retrieved for query: {query}")
+            return [DEFAULT_DOCUMENT]
         documents = self.de_duplicate_documents(documents)
         self.last_documents = documents
         return self.reorder_documents(documents, query)
