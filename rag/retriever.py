@@ -67,12 +67,20 @@ class Retriever:
         """
         documents = self.vector_store.query(query, n_results)
         logger.debug(f"Retrieved {len(documents)} documents")
-        if len(documents) == 0 or documents[0].score < 0.5:
-            logger.warning(f"No documents retrieved for query: {query}")
+        # If no documents are retrieved, return the default document
+        if len(documents) == 0:
+            logger.warning(f"Returning default document because "
+                           f"no documents retrieved for query: {query}")
             return [DEFAULT_DOCUMENT]
-        documents = self.de_duplicate_documents(documents)
-        self.last_documents = documents
-        return self.reorder_documents(documents, query)
+        de_duped_documents = self.de_duplicate_documents(documents)
+        reordered_documents = self.reorder_documents(de_duped_documents, query)
+        # If the top document is not relevant, return the default doc
+        if reordered_documents[0].rank < 0.5:
+            logger.warning(f"Returning default document due to low rank after reordering "
+                           f"{reordered_documents[0].rank}: {query}")
+            return [DEFAULT_DOCUMENT]
+        self.last_documents = reordered_documents
+        return self.last_documents
 
     def reorder_documents(self, documents: list[Document], query: str) -> list[Document]:
         """
