@@ -75,8 +75,7 @@ def test_negative_control_retrieval(create_retriever, query, negated_search_term
 @pytest.mark.skip(reason="Fallback logic not yet implemented")
 def test_fallback_low_recall_domain(create_retriever):
     documents = create_retriever.retrieve("What is the meaning of life?")
-    assert documents[0].data == "Platypus are mammals that lay eggs.  They are very strange mammals."
-
+    assert documents[0].id == 'missing_document'
 
 
 # Recall Ground truth tests - positive and negative
@@ -123,3 +122,14 @@ def test_de_duplication(create_retriever):
     assert len(documents) == 3 # 3 unique documents should be retrieved from this test set
     # Note - only two of the docuemnts retrieved are about whales ;(
     
+
+@pytest.mark.ambiguous_retrieval
+@pytest.mark.parametrize("query,n_results", [
+    ("What animals do you like?", 5),
+    ("Tell me about life forms",6)
+])
+def test_underspecified_query_retrieval(create_retriever,query, n_results):
+    documents = create_retriever.retrieve(query, n_results)
+    pprint.pprint([doc.data for doc in documents])
+    raise Exception([doc.data for doc in documents])
+
