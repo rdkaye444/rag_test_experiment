@@ -57,7 +57,7 @@ class Retriever:
     
     def __init__(self, 
                  embedder_model_name: str = 'all-MiniLM-L6-v2',
-                 ranker_model_name: str = 'cross-encoder/ms-marco-MiniLM-L-6-v2'):
+                 ranker_model_name: str = 'cross-encoder/ms-marco-MiniLM-L-12-v2'):   
         """
         Initialize the Retriever with embedding and ranking models.
         
@@ -102,7 +102,15 @@ class Retriever:
             logger.warning(f"Returning default document because "
                            f"no documents in list after de-duplication: {query}")
             return [DEFAULT_DOCUMENT]
-        if reordered_documents[0].rank < threshold:
+        top_score = reordered_documents[0].rank
+        # Implementing delta score - if the top score is much higher than the second score
+        # return it as the correct document even if the score is not high enough
+        if len(reordered_documents) > 1:
+            second_score = reordered_documents[1].rank
+        else:
+            second_score = 0.0
+        logger.warning(f"Top score: {top_score}, second score: {second_score}, delta: {top_score-second_score}")
+        if top_score < threshold and top_score-second_score < 0.1:
             logger.warning(f"Returning default document due to low rank after reordering "
                            f"score:{reordered_documents[0].rank} < {threshold}: {query}")
             return [INSUFFICIENT_RELEVANCE_DOCUMENT]

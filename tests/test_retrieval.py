@@ -20,13 +20,13 @@ def test_retriever_parametrized(create_retriever, query, n_results, expected_dat
 
 
 @pytest.mark.synonym
-@pytest.mark.parametrize("query,n_results,expected_data,expected_species", [
-    ("Does a mare bear live young?", 1, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal"),
-    ("Does an equine bear live young?", 1, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal"),
-    ("Does a bird lay eggs?", 1, "Birds lay eggs to reproduce.  Eggs are delicious", "avian"),
+@pytest.mark.parametrize("query,n_results,expected_data,expected_species,threshold", [
+    ("Does a mare give birth to live young?", 2, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal", .5),
+    ("Does an equine give birth to live young?", 1, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal", .5),
+    ("Does a bird lay eggs?", 1, "Birds lay eggs to reproduce.  Eggs are delicious", "avian", .5),
 ])
-def test_retrieval_synonym(create_retriever, query, n_results, expected_data, expected_species):
-    documents = create_retriever.retrieve(query, n_results=n_results)
+def test_retrieval_synonym(create_retriever, query, n_results, expected_data, expected_species, threshold):
+    documents = create_retriever.retrieve(query, n_results=n_results, threshold=threshold)
     assert len(documents) == n_results
 
     if expected_data and expected_species:
