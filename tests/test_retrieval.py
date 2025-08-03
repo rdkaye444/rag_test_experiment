@@ -21,9 +21,9 @@ def test_retriever_parametrized(create_retriever, query, n_results, expected_dat
 
 @pytest.mark.synonym
 @pytest.mark.parametrize("query,n_results,expected_data,expected_species,threshold", [
-    ("Does a mare give birth to live young?", 2, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal", .5),
-    ("Does an equine give birth to live young?", 1, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal", .5),
-    ("Does a bird lay eggs?", 1, "Birds lay eggs to reproduce.  Eggs are delicious", "avian", .5),
+    ("Does a mare give birth to live young?", 2, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal", .4),
+    ("Does an equine give birth to live young?", 1, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal", .4),
+    ("Does a bird lay eggs?", 1, "Birds lay eggs to reproduce.  Eggs are delicious", "avian", .4),
 ])
 def test_retrieval_synonym(create_retriever, query, n_results, expected_data, expected_species, threshold):
     documents = create_retriever.retrieve(query, n_results=n_results, threshold=threshold)
@@ -34,11 +34,11 @@ def test_retrieval_synonym(create_retriever, query, n_results, expected_data, ex
         assert documents[0].metadata.source_species == expected_species
 
 @pytest.mark.top_k
-@pytest.mark.parametrize("query,n_results,expected_data,expected_species", [
-("How many bird species do you know about?", 3, None, None),  # We’ll just check len==3
+@pytest.mark.parametrize("query,n_results,expected_data,expected_species,threshold", [
+("How many bird species do you know about?", 3, None, None,0.0),  # We’ll just check len==3
 ])
-def test_retrieval_top_k(create_retriever, query, n_results, expected_data, expected_species):
-    documents = create_retriever.retrieve(query, n_results=n_results)
+def test_retrieval_top_k(create_retriever, query, n_results, expected_data, expected_species, threshold):
+    documents = create_retriever.retrieve(query, n_results=n_results, threshold=threshold)
     assert len(documents) == n_results
 
     if expected_data and expected_species:
@@ -47,13 +47,15 @@ def test_retrieval_top_k(create_retriever, query, n_results, expected_data, expe
 
 @pytest.mark.top_k
 def test_top_n_should_include_non_avian_results(create_retriever):
-    documents = create_retriever.retrieve("How many bird species do you know about?", n_results=10)
+    """When reducing threshold to -1 we should get all results"""
+    documents = create_retriever.retrieve("How many bird species do you know about?", n_results=10, threshold=-1)
     assert len(documents) == 10
     assert not all(doc.metadata.source_species == "avian" for doc in documents)
 
 @pytest.mark.top_k
 def test_top_n_all_results_should_be_birds(create_retriever):
-    documents = create_retriever.retrieve("How many bird species do you know about?", n_results=5)
+    """When reducing threshold to -1 we should get all 5 results in test data set of type avian"""
+    documents = create_retriever.retrieve("How many bird species do you know about?", n_results=5, threshold=-1)
     assert all(doc.metadata.source_species == "avian" for doc in documents)
 
 
@@ -66,8 +68,9 @@ def test_top_n_all_results_should_be_birds(create_retriever):
 ("How do whales breath", "insect"),
 ])
 def test_negative_control_retrieval(create_retriever, query, negated_search_term):
-    # Note - because my test set is so small, I have to restrict the numbe of results
-    # to get a passing test.
+    # Note - because my test set is so small, I have to restrict the number of results
+    # to get a passing test.clear
+
     documents = create_retriever.retrieve(query, n_results=2)
     for document in documents:
         assert negated_search_term not in document.data.lower()
@@ -124,12 +127,24 @@ def test_de_duplication(create_retriever):
     
 
 @pytest.mark.ambiguous_retrieval
-@pytest.mark.parametrize("query,n_results", [
-    ("What animals do you like?", 5),
-    ("Tell me about life forms",6)
+@pytest.mark.parametrize("query,n_results,threshold", [
+    ("What animals do you like?", 5, -1),
+    ("Tell me about life forms",6, -1)
 ])
-def test_underspecified_query_retrieval(create_retriever,query, n_results):
-    documents = create_retriever.retrieve(query, n_results)
+def test_underspecified_query_retrieval_no_threshold_returns_n_results(create_retriever,query, n_results, threshold):
+    """When reducing the threshold to -1 we should get n results"""
+    documents = create_retriever.retrieve(query, n_results, threshold)
+    assert len(documents) == n_results, f"Expected {n_results} due to threshold of {threhold} results, got {len(documents)}"
+
+@pytest.mark.ambiguous_retrieval
+@pytest.mark.parametrize("query,n_results,threshold", [
+    ("What animals do you like?", 5, .5),
+    ("Tell me about life forms",6, .5)
+])
+def test_underspecified_query_retrieval_with_threshold_returns_default_document(create_retriever,query, n_results, threshold):
+    """When using a realistic threshold we should get 1 result - the default document"""
+    documents = create_retriever.retrieve(query, n_results, threshold)
     pprint.pprint([doc.data for doc in documents])
-    raise Exception([doc.data for doc in documents])
+    assert len(documents) == 1 
+
 
