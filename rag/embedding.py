@@ -87,6 +87,12 @@ class Embedder:
             List[List[float]]: List of vector representations, one for each input text.
         """
         return self._embed(texts)
+    
+    def compare(self, text1: str, text2: str) -> float:
+        """
+        Compare two text strings and return a similarity score.
+        """
+        return self.model.similarity(text1, text2)
 
 
 class ChromaEmbedder:
