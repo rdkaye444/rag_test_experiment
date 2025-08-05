@@ -4,13 +4,16 @@ import pprint
 @pytest.mark.direct_retrieval
 @pytest.mark.parametrize("query,n_results,expected_data,expected_species", [
     # Basic retrievals
-    ("Why is a platypus so weird?", 1, "Platypus are mammals that lay eggs.  They are very strange mammals.", "mammal"),
-    ("Does a horse bear live young?", 1, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal"),
+    ("Do platypuses lay eggs?", 1, "Platypus are mammals that lay eggs.  They are very strange mammals.", "mammal"),
+    ("Are penguins flightless?",1, "Penguins are flightless birds that lay eggs and raise their chicks on icy terrain.", "avian"),
+    ("Does a horse have live young?", 1, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal"),
     # Abstract references to specific species retrieval
     ("Tell me something about the platypus", 1, "Platypus are mammals that lay eggs.  They are very strange mammals.", "mammal"),
+    ("Tell me about crocodiles", 1, "Crocodiles are reptiles that lay eggs in nests near water. They are cold-blooded and have scaly skin.", "reptile"),
+    ("What is special about bats?", 1, "Bats are the only mammals capable of sustained flight. They give birth to live young.", "mammal"),
     ("Is there anything I should know about the platypus?", 1, "Platypus are mammals that lay eggs.  They are very strange mammals.", "mammal"),
 ])
-def test_retriever_parametrized(create_retriever, query, n_results, expected_data, expected_species):
+def test_direct_retrieval_should_return_expected_data(create_retriever, query, n_results, expected_data, expected_species):
     documents = create_retriever.retrieve(query, n_results=n_results)
     assert len(documents) == n_results
 
@@ -75,11 +78,6 @@ def test_negative_control_retrieval(create_retriever, query, negated_search_term
     for document in documents:
         assert negated_search_term not in document.data.lower()
 
-@pytest.mark.skip(reason="Fallback logic not yet implemented")
-def test_fallback_low_recall_domain(create_retriever):
-    documents = create_retriever.retrieve("What is the meaning of life?")
-    assert documents[0].id == 'missing_document'
-
 
 # Recall Ground truth tests - positive and negative
 # Note - for a retriever a common simplification is Recall@1. 
@@ -131,7 +129,7 @@ def test_de_duplication(create_retriever):
     ("What animals do you like?", 5, -1),
     ("Tell me about life forms",6, -1)
 ])
-def test_underspecified_query_retrieval_no_threshold_returns_n_results(create_retriever,query, n_results, threshold):
+def test_ambiguous_query_retrieval_no_threshold_returns_n_results(create_retriever,query, n_results, threshold):
     """When reducing the threshold to -1 we should get n results"""
     documents = create_retriever.retrieve(query, n_results, threshold)
     assert len(documents) == n_results, f"Expected {n_results} due to threshold of {threhold} results, got {len(documents)}"
@@ -141,10 +139,34 @@ def test_underspecified_query_retrieval_no_threshold_returns_n_results(create_re
     ("What animals do you like?", 5, .5),
     ("Tell me about life forms",6, .5)
 ])
-def test_underspecified_query_retrieval_with_threshold_returns_default_document(create_retriever,query, n_results, threshold):
+def test_ambiguous_retrieval_with_threshold_returns_default_document(create_retriever,query, n_results, threshold):
     """When using a realistic threshold we should get 1 result - the default document"""
     documents = create_retriever.retrieve(query, n_results, threshold)
     pprint.pprint([doc.data for doc in documents])
     assert len(documents) == 1 
 
+@pytest.mark.low_recall_domain
+@pytest.mark.parametrize("query,n_results,threshold", [
+    ("When do ducklings learn to swim?", 1, .9),
+    ("Where do penguins have kids?", 1, .9),
+    ("Which animals carry their young in pouches?", 1, .9),
+])
+def test_low_recall_domain(create_retriever, query, n_results, threshold):
+    """This test is for very high detail retrieval - we should get a single document
+    that is in the test data set containing this detail with a very high threshold"""
+    documents = create_retriever.retrieve(query, n_results, threshold)
+    assert len(documents) == 1 
+
+@pytest.mark.fallback
+@pytest.mark.parametrize("query,n_results,threshold", [
+    ("What would happen if microwave blueberry zero nonsenese?", 1, 0.1),
+    ("asdfew?", 1, 0.1),
+    ("Tell me about everything", 1, 0.1),
+])
+def test_low_recall_domain(create_retriever, query, n_results, threshold):
+    """This test verifies that fallback logic is working for garbage queries
+    even when the threshold is low"""
+    documents = create_retriever.retrieve(query, n_results, threshold)
+    assert len(documents) == 1 
+    assert documents[0].id == 'insufficient_relevance'
 
