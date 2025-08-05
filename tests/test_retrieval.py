@@ -26,7 +26,12 @@ def test_direct_retrieval_should_return_expected_data(create_retriever, query, n
 @pytest.mark.parametrize("query,n_results,expected_data,expected_species,threshold", [
     ("Does a mare give birth to live young?", 2, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal", .4),
     ("Does an equine give birth to live young?", 1, "A horse is a mammal.  Mammals are warm-blooded animals that have fur or hair.  They give birth to live young.", "mammal", .4),
-    ("Does a bird lay eggs?", 1, "Birds lay eggs to reproduce.  Eggs are delicious", "avian", .4),
+    ("Do avians lay eggs?", 1, "Birds lay eggs to reproduce.  Eggs are delicious", "avian", .4),
+    ("Does a duck-billed platypus lay eggs?", 1, "Platypus are mammals that lay eggs.  They are very strange mammals.", "mammal", .4),
+    ("Do macropods carry their young in pouches?", 1, "Kangaroos are marsupials. They carry their young in pouches and give birth to live offspring.", "mammal", .4),
+    ("Do cetaceans nurse their calves?", 1, "Whales are marine mammals. They give birth to live calves and nurse them underwater.", "mammal", .4),
+    ("Do crocodilian lay eggs?", 1, "Crocodiles are reptiles that lay eggs in nests near water. They are cold-blooded and have scaly skin.", "reptile", .4),
+    ("Does a lizard spawn?", 1, "Lizards are reptiles that can regrow their tails and usually lay soft-shelled eggs.", "reptile", .4),
 ])
 def test_retrieval_synonym(create_retriever, query, n_results, expected_data, expected_species, threshold):
     documents = create_retriever.retrieve(query, n_results=n_results, threshold=threshold)
