@@ -51,7 +51,7 @@ def test_retrieval_synonym(create_retriever, query, n_results, expected_data, ex
 ])
 def test_retrieval_top_k_low_threshold_should_return_correct_set_of_results(create_retriever, query, n_query,de_dupe_doc_count, expected_count, expected_species, threshold):
     documents = create_retriever.retrieve(query, n_results=n_query, threshold=threshold)
-    assert de_dupe_doc_count == len(documents), f"Expected {de_dupe_doc_count} de-dupedresults, got {len(documents)}"
+    assert de_dupe_doc_count == len(documents), f"Expected {de_dupe_doc_count} de-duped results, got {len(documents)}"
     filtered_results = [doc for doc in documents if doc.metadata.source_species in expected_species]
     assert len(filtered_results) >= expected_count, f"Expected {expected_count} {expected_species} results, got {len(filtered_results)}"
 
