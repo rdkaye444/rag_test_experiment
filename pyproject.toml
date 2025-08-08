@@ -28,6 +28,18 @@ testpaths = [
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
+markers = [
+    "direct_retrieval",
+    "synonym",
+    "top_k",
+    "negative_control",
+    "recall_ground_truth",
+    "recall_eval_negative",
+    "de_duplication",
+    "ambiguous_retrieval",
+    "low_recall_domain",
+    "fallback"
+]
 
 [tool.ruff]
 line-length = 120
