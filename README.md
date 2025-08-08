@@ -212,6 +212,74 @@ The current generator is a mock implementation. To integrate with real LLMs:
 
 [Add your license information here]
 
+## Retriever Fallback Logic
+
+The retriever implements sophisticated fallback mechanisms to handle various edge cases and ensure robust behavior when document relevance is insufficient. This multi-tiered approach provides graceful degradation and meaningful responses even when the ideal documents cannot be found.
+
+### Fallback Scenarios
+
+The retriever fallback logic operates through three main scenarios:
+
+#### 1. No Documents Retrieved (Empty Results)
+**Trigger**: When the vector store query returns zero documents
+- **Response**: Returns `DEFAULT_DOCUMENT` with ID `'missing_document'`
+- **Use Case**: Handles cases where the vector database is empty or the query doesn't match any indexed content
+- **Document Content**: "No documents retrieved for query"
+
+#### 2. No Documents After De-duplication
+**Trigger**: When all retrieved documents are removed during the de-duplication process
+- **Response**: Returns `DEFAULT_DOCUMENT` with ID `'missing_document'`
+- **Use Case**: Handles edge cases where all retrieved documents are near-duplicates and get filtered out
+- **Document Content**: "No documents retrieved for query"
+
+#### 3. Insufficient Relevance (Low Quality Results)
+**Trigger**: When documents are retrieved but don't meet relevance criteria
+- **Response**: Returns `INSUFFICIENT_RELEVANCE_DOCUMENT` with ID `'insufficient_relevance'`
+- **Relevance Criteria**: 
+  - Top document score < threshold AND
+  - Delta between top and second document < 0.1
+- **Document Content**: "Documents retrieved but not relevant to query"
+
+### Delta Score Logic
+
+The retriever implements a "delta score" mechanism that provides intelligent fallback behavior:
+
+```python
+# If top score is much higher than second score, accept it even if below threshold
+if top_score < threshold and top_score - second_score < 0.1:
+    return [INSUFFICIENT_RELEVANCE_DOCUMENT]
+```
+
+**Purpose**: This logic distinguishes between:
+- **Low-confidence scenarios**: Multiple documents with similar (low) scores → Return fallback document
+- **High-confidence scenarios**: One document clearly better than others → Return the best document even if below absolute threshold
+
+### Configuration
+
+- **Default Threshold**: 0.5 (configurable via `threshold` parameter)
+- **Delta Threshold**: 0.1 (hardcoded, represents minimum score difference for confidence)
+- **Fallback Documents**: Pre-defined system documents with standardized IDs for programmatic detection
+
+### Testing Fallback Behavior
+
+The test suite includes comprehensive coverage of fallback scenarios:
+
+- `@pytest.mark.fallback`: Tests for garbage queries and edge cases
+- `@pytest.mark.ambiguous_retrieval`: Tests for queries with unclear intent  
+- `@pytest.mark.low_recall_domain`: Tests for high-threshold scenarios
+
+Example fallback test:
+```python
+@pytest.mark.fallback
+def test_low_recall_domain(create_retriever, query, n_results, threshold):
+    """Verifies fallback logic for garbage queries even with low threshold"""
+    documents = create_retriever.retrieve(query, n_results, threshold)
+    assert len(documents) == 1 
+    assert documents[0].id == 'insufficient_relevance'
+```
+
+This fallback system ensures that the RAG pipeline never fails silently and always provides meaningful feedback about retrieval quality, enabling downstream components to make informed decisions about response generation.
+
 ## Acknowledgments
 
 - Sentence Transformers for embedding models

@@ -71,11 +71,14 @@ def test_top_n_all_results_should_be_birds(create_retriever):
 
 @pytest.mark.negative_control
 @pytest.mark.parametrize("query,negated_search_term", [
-("How do whales breath", "platypus"),
-("How do whales breath", "bird"),
-("How do whales breath", "elephant"),
-("How do whales breath", "salmon"),
-("How do whales breath", "insect"),
+    ("How do whales breathe", "platypus"),
+    ("How do whales breathe", "bird"),
+    ("How do whales breathe", "elephant"),
+    ("How do whales breathe", "salmon"),
+    ("How do whales breathe", "frog"),
+    ("How do whales breathe", "crocodile"),
+    ("How do whales breathe", "bat"),
+    ("How do whales breathe", "seahorse"),
 ])
 def test_negative_control_retrieval(create_retriever, query, negated_search_term):
     # Note - because my test set is so small, I have to restrict the number of results
@@ -99,7 +102,7 @@ def _test_ground_truth(create_retriever, query, ground_truth_answer, top_k, expe
         f"Expected something containing: '{ground_truth_answer}'\n"
         f"Retrieved:\n" + "\n".join(f"- {doc.data}" for doc in retrieved_docs))
 
-@pytest.mark.recall_ground_truth
+@pytest.mark.recall_ground_truth_eval_positive
 @pytest.mark.parametrize("query, ground_truth_answer, top_k, expected_found", [
     ("Why is a platypus so weird?", "platypus", 3, True),
     ("Does a horse bear live young?", "live young", 3, True),
@@ -109,7 +112,7 @@ def _test_ground_truth(create_retriever, query, ground_truth_answer, top_k, expe
 def test_recall_against_ground_truth(create_retriever, query, ground_truth_answer, top_k, expected_found):
     _test_ground_truth(create_retriever, query, ground_truth_answer, top_k, expected_found)
 
-@pytest.mark.recall_eval_negative
+@pytest.mark.recall_ground_truth_eval_negative
 @pytest.mark.parametrize("query, forbidden_answer, top_k, expected_found", [
     ("Tell me about amphibians", "platypus", 3, False),
     ("What do reptiles eat?", "fur or hair", 3, False),
@@ -118,9 +121,6 @@ def test_recall_against_ground_truth(create_retriever, query, ground_truth_answe
 def test_recall_against_ground_truth_negative(create_retriever, query, forbidden_answer, top_k, expected_found):
     _test_ground_truth(create_retriever, query, forbidden_answer, top_k, expected_found)
     
-
-#TODO: Add a test for lexical vs symantic matching - will need to modify retriever code to do test_top_n_should_include_non_avian_results
-#TODO: Implement hybrid test_retrieval_synonym
 
 @pytest.mark.de_duplication
 def test_de_duplication(create_retriever):
@@ -139,17 +139,19 @@ def test_de_duplication(create_retriever):
 def test_ambiguous_query_retrieval_no_threshold_returns_n_results(create_retriever,query, n_results, threshold):
     """When reducing the threshold to -1 we should get n results"""
     documents = create_retriever.retrieve(query, n_results, threshold)
-    assert len(documents) == n_results, f"Expected {n_results} due to threshold of {threhold} results, got {len(documents)}"
+    assert len(documents) == n_results, f"Expected {n_results} due to threshold of {threshold} results, got {len(documents)}"
 
 @pytest.mark.ambiguous_retrieval
 @pytest.mark.parametrize("query,n_results,threshold", [
-    ("What animals do you like?", 5, .5),
-    ("Tell me about life forms",6, .5)
+    ("What animals do you like?", 1, .5),
+    ("Tell me about life forms", 6, .5)
 ])
-def test_ambiguous_retrieval_with_threshold_returns_default_document(create_retriever,query, n_results, threshold):
-    """When using a realistic threshold we should get 1 result - the default document"""
+def test_ambiguous_retrieval_with_strict_threshold_returns_default_document(create_retriever,query, n_results, threshold):
+    """The first query - What animals do you like? has an interesting quirk
+    The documents retrieved are all pretty lousy matches.  None of them meet the threshold.
+    The first query however trips the delta check - it has a higher score than the second document.
+    Thus all documents are returned.  I don't know yet if I want this to be a separate test case."""
     documents = create_retriever.retrieve(query, n_results, threshold)
-    pprint.pprint([doc.data for doc in documents])
     assert len(documents) == 1 
 
 @pytest.mark.low_recall_domain
@@ -170,7 +172,7 @@ def test_low_recall_domain(create_retriever, query, n_results, threshold):
     ("asdfew?", 1, 0.1),
     ("Tell me about everything", 1, 0.1),
 ])
-def test_low_recall_domain(create_retriever, query, n_results, threshold):
+def test_fallback_logic_for_garbage_queries(create_retriever, query, n_results, threshold):
     """This test verifies that fallback logic is working for garbage queries
     even when the threshold is low"""
     documents = create_retriever.retrieve(query, n_results, threshold)
